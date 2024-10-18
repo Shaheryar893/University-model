@@ -1,0 +1,90 @@
+# Class representing a person in the university (base class for students and faculty)
+class Person:
+    def __init__(self, name, age, email):
+        self.name = name
+        self.age = age
+        self.email = email
+
+    def get_details(self):
+        return f"Name: {self.name}, Age: {self.age}, Email: {self.email}"
+
+# Class representing a student, inheriting from Person
+class Student(Person):
+    def __init__(self, name, age, email, student_id, major):
+        super().__init__(name, age, email)
+        self.student_id = student_id
+        self.major = major
+        self.courses = []
+
+    def enroll_in_course(self, course):
+        self.courses.append(course)
+        course.add_student(self)
+
+    def get_courses(self):
+        return [course.name for course in self.courses]
+
+    def get_details(self):
+        return f"Student {self.name}, ID: {self.student_id}, Major: {self.major}"
+
+# Class representing a faculty member, inheriting from Person
+class Faculty(Person):
+    def __init__(self, name, age, email, faculty_id, department):
+        super().__init__(name, age, email)
+        self.faculty_id = faculty_id
+        self.department = department
+        self.courses = []
+
+    def assign_course(self, course):
+        self.courses.append(course)
+        course.assign_faculty(self)
+
+    def get_courses(self):
+        return [course.name for course in self.courses]
+
+    def get_details(self):
+        return f"Faculty {self.name}, ID: {self.faculty_id}, Department: {self.department}"
+
+# Class representing a course
+class Course:
+    def __init__(self, name, course_code, credits):
+        self.name = name
+        self.course_code = course_code
+        self.credits = credits
+        self.students = []
+        self.faculty = None
+
+    def add_student(self, student):
+        self.students.append(student)
+
+    def assign_faculty(self, faculty):
+        self.faculty = faculty
+
+    def get_students(self):
+        return [student.name for student in self.students]
+
+    def get_details(self):
+        faculty_name = self.faculty.name if self.faculty else "TBD"
+        return f"Course: {self.name}, Code: {self.course_code}, Faculty: {faculty_name}"
+
+# Sample usage of the university model
+if __name__ == "__main__":
+    # Creating faculty members
+    faculty_1 = Faculty("Naveed Sarwar", 45, "nav@university.com", "F001", "Computer Science")
+    
+    # Creating courses
+    course_1 = Course("Artificial Intelligence", "CS101", 3)
+    
+    # Assigning faculty to courses
+    faculty_1.assign_course(course_1)
+    
+    # Creating students
+    student_1 = Student("Shaheryae", 20, "sshehry95@gmail.com", "S12345", "Computer Science")
+    
+    # Enrolling student in course
+    student_1.enroll_in_course(course_1)
+
+    # Displaying details
+    print(faculty_1.get_details())
+    print(course_1.get_details())
+    print(student_1.get_details())
+    print(f"Students in {course_1.name}: {course_1.get_students()}")
